@@ -20,6 +20,7 @@ class Main extends React.Component {
       know: "",
       dataList: users,
       select: "id",
+      active: null,
     };
   }
 
@@ -122,6 +123,40 @@ class Main extends React.Component {
 
     const onChanged = (e) => {
       this.setState({ [e.target.name]: e.target.value });
+    };
+
+    // <---- (Edit) Updating data --->
+
+    const onUpdate = (
+      { id, name, lastName, age, country, status, know },
+      isSave
+    ) => {
+      if (isSave) {
+        let updater = this.state.dataList.map((value) => {
+          return value.id === this.state.active?.id
+            ? {
+                ...value,
+                name: this.state.name,
+                lastName: this.state.lastName,
+                age: this.state.age,
+                country: this.state.country,
+                status: this.state.status,
+                know: this.state.know,
+              }
+            : value;
+        });
+        this.setState({ dataList: updater, active: null });
+      } else {
+        this.setState({
+          name: name,
+          lastName: lastName,
+          age: age,
+          country: country,
+          status: status,
+          know: know,
+          active: { id, name, lastName, age, country, status },
+        });
+      }
     };
 
     return (
@@ -256,28 +291,120 @@ class Main extends React.Component {
           </thead>
           <tbody>
             {this.state.dataList.length ? (
-              this.state.dataList.map((value) => {
-                return (
-                  <tr key={value.id} className="item">
-                    <td>{value.id}</td>
-                    <td>{value.name} </td>
-                    <td>{value.lastName}</td>
-                    <td>{value.age}</td>
-                    <td>{value.country}</td>
-                    <td>{value.status}</td>
-                    <td>{value.know}</td>
-                    <td>
-                      <button className="button-30">Edit</button>
-                      <button
-                        onClick={() => onDelete(value.id)}
-                        className="button-30"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
+              this.state.dataList.map(
+                ({ id, name, lastName, age, country, status, know }) => {
+                  return (
+                    <tr key={id} className="item">
+                      <td>{id}</td>
+                      <td>
+                        {this.state.active?.id === id ? (
+                          <input
+                            name="name"
+                            value={this.state.name}
+                            onChange={onChanged}
+                            type="text"
+                            className="input_style_edit"
+                          />
+                        ) : (
+                          name
+                        )}{" "}
+                      </td>
+                      <td>
+                        {this.state.active?.id === id ? (
+                          <input
+                            name="lastName"
+                            value={this.state.lastName}
+                            onChange={onChanged}
+                            type="text"
+                            className="input_style_edit"
+                          />
+                        ) : (
+                          lastName
+                        )}
+                      </td>
+                      <td>
+                        {this.state.active?.id === id ? (
+                          <input
+                            name="age"
+                            value={this.state.age}
+                            onChange={onChanged}
+                            type="text"
+                            className="input_style_edit"
+                          />
+                        ) : (
+                          age
+                        )}
+                      </td>
+                      <td>
+                        {this.state.active?.id === id ? (
+                          <input
+                            name="country"
+                            value={this.state.country}
+                            onChange={onChanged}
+                            type="text"
+                            className="input_style_edit"
+                          />
+                        ) : (
+                          country
+                        )}
+                      </td>
+                      <td>
+                        {this.state.active?.id === id ? (
+                          <input
+                            name="status"
+                            value={this.state.status}
+                            onChange={onChanged}
+                            type="text"
+                            className="input_style_edit"
+                          />
+                        ) : (
+                          status
+                        )}
+                      </td>
+                      <td>
+                        {this.state.active?.id === id ? (
+                          <input
+                            name="know"
+                            value={this.state.know}
+                            onChange={onChanged}
+                            type="text"
+                            className="input_style_edit"
+                          />
+                        ) : (
+                          know
+                        )}
+                      </td>
+                      <td>
+                        <button
+                          onClick={() =>
+                            onUpdate(
+                              {
+                                id,
+                                name,
+                                lastName,
+                                age,
+                                country,
+                                status,
+                                know,
+                              },
+                              this.state.active?.id === id
+                            )
+                          }
+                          className="button-30"
+                        >
+                          {this.state.active?.id === id ? "Save" : "Edit"}
+                        </button>
+                        <button
+                          onClick={() => onDelete(id)}
+                          className="button-30"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                }
+              )
             ) : (
               <tr>
                 <th colSpan={8}>
